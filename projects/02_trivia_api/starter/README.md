@@ -68,7 +68,7 @@ Now set the needed Flask environment values.
 ```export FLASK_ENV=development```
 
 Now start the backend
-```flask start```
+```flask run```
 
 <h3>Getting Started - Start the frontend</h3>
 Go to the frontend directory where you run npm install and run the following
@@ -188,7 +188,7 @@ Example response
 
 Get all questions for a specific page
 
-Example call ```http://localhost:5000/questionsquestions?page=2```
+Example call ```curl http://localhost:5000/questions?page=2```
 
 Example response
 ```javascript
@@ -226,7 +226,7 @@ Example response
 Delete specific question
 
 Example call
-```curl -X DELETE http://localhost:5000/questions/1```
+```curl -X DELETE http://localhost:5000/questions/14```
 
 Example response
 ```javascript
@@ -325,9 +325,9 @@ have already been presented.
 
 It is also possible to omit the category json to receive a random category and question.
 
-Example call random question with specified category skip question 70```curl -v -X POST 127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [70], "quiz_category": {"type": "Science", "id": "0"}}'```
+Example call random question with specified category skip question 70```curl -X POST 127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [70], "quiz_category": {"type": "Science", "id": "0"}}'```
 
-Example call random category and question skip question 70 ```curl -v -X POST 127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [70], "quiz_category": {"type": "click", "id": 0}}'```
+Example call random category and question skip question 70 ```curl -X POST 127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [70], "quiz_category": {"type": "click", "id": 0}}'```
 
 Example response
 ```javascript
