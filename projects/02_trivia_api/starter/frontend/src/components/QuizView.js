@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 import '../stylesheets/QuizView.css';
 
-const questionsPerPlay = 5; 
+const questionsPerPlay = 5;
 
 class QuizView extends Component {
   constructor(props){
@@ -16,13 +16,14 @@ class QuizView extends Component {
         numCorrect: 0,
         currentQuestion: {},
         guess: '',
-        forceEnd: false
+        forceEnd: false,
+        question_count: questionsPerPlay
     }
   }
 
   componentDidMount(){
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `/categories`,
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.categories })
@@ -48,7 +49,7 @@ class QuizView extends Component {
     if(this.state.currentQuestion.id) { previousQuestions.push(this.state.currentQuestion.id) }
 
     $.ajax({
-      url: '/quizzes', //TODO: update request URL
+      url: '/quizzes',
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
