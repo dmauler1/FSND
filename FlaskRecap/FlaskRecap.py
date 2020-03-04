@@ -12,9 +12,11 @@ greetings = {
             'ja': 'こんにちは'
             }
 
+
 @app.route('/greeting', methods=['GET'])
 def greeting_all():
     return jsonify({'greetings': greetings})
+
 
 @app.route('/greeting/<lang>', methods=['GET'])
 def greeting_one(lang):
@@ -23,6 +25,7 @@ def greeting_one(lang):
         abort(404)
     return jsonify({'greeting': greetings[lang
     ]})
+
 
 @app.route('/greeting', methods=['POST'])
 def greeting_add():

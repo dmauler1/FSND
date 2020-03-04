@@ -28,9 +28,12 @@ def paginate(request, selection):
 
     return some_models[start:end]
 
+
 """
-Init web service 
+Init web service
 """
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -44,8 +47,10 @@ def create_app(test_config=None):
         :param response:
         :return: headers
         """
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET,PATCH,POST,DELETE,OPTIONS')
         return response
 
     @app.route('/categories', methods=['GET'])
@@ -155,7 +160,8 @@ def create_app(test_config=None):
         :param question_id:
         :return: json object
         """
-        question = Question.query.filter(Question.id == question_id).one_or_none()
+        question = Question.query.filter(
+            Question.id == question_id).one_or_none()
 
         if question is None:
             abort(404, "")
@@ -226,7 +232,8 @@ def create_app(test_config=None):
     @app.route('/questions/search', methods=['POST', ])
     def find_question():
         """
-        Take in provided string and return all questions that partially match search term.
+        Take in provided string and return all
+        questions that partially match search term.
         :return: json object
         """
         body = request.get_json()
@@ -236,10 +243,13 @@ def create_app(test_config=None):
         if search_term is None:
             abort(422, 'Missing question search term')
 
-        selection = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
+        selection = Question.query.filter(
+            Question.question.ilike(f'%{search_term}%')).all()
 
         if not selection:
-            abort(404, f"Unable to locate any questions based on search term {search_term}")
+            abort(
+                404, f"Unable to locate any questions "
+                     f"based on search term {search_term}")
 
         questions = [some_model.format() for some_model in selection]
 
@@ -255,16 +265,17 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=['POST', ])
     def get_quizzes():
         """
-        Generate a random set of questions for a requested category. If previously
-        presented question ids are provided they will be excluded until all questions are
-        exhausted. If no category is provided a random category and question will be returned.
+        Generate a random set of questions for a requested category.
+        If previously presented question ids are provided they will be
+        excluded until all questions are exhausted. If no category is provided
+        a random category and question will be returned.
         :return: json object
         """
+        json_message = ""
+
         body = request.get_json()
-        print(body)
 
         previous_questions = body.get('previous_questions', None)
-        print(previous_questions)
 
         quiz_category = body.get('quiz_category', None)
 
@@ -283,12 +294,11 @@ def create_app(test_config=None):
             real_id = int(quiz_category['id'])
             real_id = real_id + 1
 
-        print(real_id)
-
         selection = Question.query.filter(Question.category == real_id).all()
 
         if not selection:
-            abort(404, f"Provided category id {quiz_category['id']} not found!")
+            abort(
+                404, f"Provided category id {quiz_category['id']} not found!")
 
         question_ids = []
 
@@ -296,7 +306,6 @@ def create_app(test_config=None):
             safe_to_add = True
             for old_question in previous_questions:
                 if question.id == old_question:
-
                     safe_to_add = False
                     break
             if safe_to_add:
@@ -310,8 +319,6 @@ def create_app(test_config=None):
             picked_id = random.choice(question_ids)
         elif id_count == 1:
             picked_id = question_ids[0]
-        else:
-            abort(404, "No more questions")
 
         new_question = None
 
@@ -320,18 +327,22 @@ def create_app(test_config=None):
                 new_question = question
                 break
 
-        if not new_question:
-            abort(500)
+        if new_question:
+            # abort(500)
+            json_message = jsonify({'success': True,
+                                    'question': {
+                                        'id': new_question.id,
+                                        'question': new_question.question,
+                                        'answer': new_question.answer,
+                                        'category': new_question.category,
+                                        'difficulty': new_question.difficulty
+                                    },
+                                    'question_count': len(question_ids)})
+        else:
+            json_message = jsonify({'success': False,
+                                    'question': None})
 
-        return jsonify({'success': True,
-            'question': {
-            'id': new_question.id,
-            'question': new_question.question,
-            'answer': new_question.answer,
-            'category': new_question.category,
-            'difficulty': new_question.difficulty
-        },
-        'question_count': len(question_ids)})
+        return json_message
 
     @app.errorhandler(400)
     def not_found(error):
